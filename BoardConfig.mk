@@ -22,6 +22,8 @@ TARGET_NO_KERNEL := true
 
 # Disable DLKMs compilation for lunch qssi builds.
 TARGET_KERNEL_DLKM_DISABLE := true
+# create symlink system/lib/modules -> system_dlkm/lib/modules
+CREATE_SYSTEM_DLKM_SYMLINK := true
 
 -include $(QCPATH)/common/msmnile/BoardConfigVendor.mk
 
