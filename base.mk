@@ -668,6 +668,7 @@ FD_LEAK := libc_leak_detector
 
 PRODUCT_PACKAGES := \
     AccountAndSyncSettings \
+    Bluetooth \
     DeskClock \
     AlarmProvider \
     Calculator \
@@ -919,7 +920,7 @@ SOONG_CONFIG_bredr_vs_btadva += bredr_or_btadva
 
 ifneq "$(wildcard vendor/qcom/proprietary/commonsys/bt/bt_adv_audio)" ""
     $(warning bt_adv_audio dir is present)
-    SOONG_CONFIG_bredr_vs_btadva_bredr_or_btadva := btadva
+    SOONG_CONFIG_bredr_vs_btadva_bredr_or_btadva := bredr 
 else
     $(warning bt_adv_audio dir is not present)
     SOONG_CONFIG_bredr_vs_btadva_bredr_or_btadva := bredr
