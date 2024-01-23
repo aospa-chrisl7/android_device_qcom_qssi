@@ -808,6 +808,9 @@ PRODUCT_PACKAGES += vcard
 # tcmiface for tcm support
 PRODUCT_PACKAGES += tcmiface
 
+#usbudev service for usb ip assigment
+PRODUCT_PACKAGES += usbudev
+
 # healthd libaray expanded for mode charger
 PRODUCT_PACKAGES += libhealthd.msm
 
