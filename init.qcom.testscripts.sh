@@ -46,3 +46,7 @@ case "$func_enable" in
     1) runcon u:r:su:s0 /system/bin/sh /system_ext/ramdump_wrapper.sh  2>/dev/null
 	;;
 esac
+
+if [ -e /product/etc/qti_freezer_whitelist.json ]; then
+    runcon u:r:su:s0 /system_ext/bin/freezerwhitelist  2>/dev/null
+fi
