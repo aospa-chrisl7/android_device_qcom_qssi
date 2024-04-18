@@ -5,8 +5,8 @@ TARGET_BOARD_PLATFORM := qssi
 TARGET_BOARD_SUFFIX := _64
 TARGET_BOOTLOADER_BOARD_NAME := qssi_64
 
-# Opt out of 16K alignment changes
-PRODUCT_MAX_PAGE_SIZE_SUPPORTED := 4096
+#Align ELF segment of binaries to 64k
+PRODUCT_MAX_PAGE_SIZE_SUPPORTED := 65536
 
 #Flag to Enable 64 bit only configuration
 TARGET_SUPPORTS_64_BIT_ONLY := true
@@ -143,6 +143,12 @@ TARGET_USES_NQ_NFC := true
 # default is nosdcard, S/W button enabled in resource
 PRODUCT_CHARACTERISTICS := nosdcard
 BOARD_FRP_PARTITION_NAME := frp
+
+# TODO(b/330696629) remove this once device can drop HIDL.
+# This adds hwservicemanager and the allocator service to the device.
+PRODUCT_PACKAGES += \
+    hwservicemanager \
+    android.hidl.allocator@1.0-service
 
 #Android EGL implementation
 PRODUCT_PACKAGES += libGLES_android
