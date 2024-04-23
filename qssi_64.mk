@@ -8,6 +8,9 @@ TARGET_BOOTLOADER_BOARD_NAME := qssi_64
 #Align ELF segment of binaries to 64k
 PRODUCT_MAX_PAGE_SIZE_SUPPORTED := 65536
 
+#Enable AOSP to be page size agnostic
+PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO := true
+
 #Flag to Enable 64 bit only configuration
 TARGET_SUPPORTS_64_BIT_ONLY := true
 
