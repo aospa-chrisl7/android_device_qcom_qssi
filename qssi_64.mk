@@ -8,6 +8,9 @@ TARGET_BOOTLOADER_BOARD_NAME := qssi_64
 #Align ELF segment of binaries to 64k
 PRODUCT_MAX_PAGE_SIZE_SUPPORTED := 65536
 
+#Enable AOSP to be page size agnostic
+PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO := true
+
 #Flag to Enable 64 bit only configuration
 TARGET_SUPPORTS_64_BIT_ONLY := true
 
@@ -143,6 +146,8 @@ TARGET_USES_NQ_NFC := true
 # default is nosdcard, S/W button enabled in resource
 PRODUCT_CHARACTERISTICS := nosdcard
 BOARD_FRP_PARTITION_NAME := frp
+
+PRODUCT_PACKAGES += qspa_system.rc qspa_default.rc
 
 # TODO(b/330696629) remove this once device can drop HIDL.
 # This adds hwservicemanager and the allocator service to the device.
