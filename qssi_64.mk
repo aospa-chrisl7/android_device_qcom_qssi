@@ -17,10 +17,6 @@ TARGET_SUPPORTS_64_BIT_ONLY := true
 # Skip VINTF checks for kernel configs since we do not have kernel source
 PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS := false
 
-#Enable product partition Native I/F. It is automatically set to current if
-#the shipping API level for the target is greater than 29
-PRODUCT_PRODUCT_VNDK_VERSION := current
-
 RELAX_USES_LIBRARY_CHECK := true
 NEED_AIDL_NDK_PLATFORM_BACKEND := true
 
@@ -278,10 +274,6 @@ PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
 ifneq ($(strip $(TARGET_USES_RRO)),true)
 DEVICE_PACKAGE_OVERLAYS += device/qcom/qssi_64/overlay
 endif
-
-
-#Enable vndk-sp Libraries
-PRODUCT_PACKAGES += vndk_package
 
 PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE:=true
 
