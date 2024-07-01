@@ -698,6 +698,9 @@ PRODUCT_PACKAGES := \
     QesdkSysService \
     libqesdk_ndk_platform.qti
 
+PRODUCT_PACKAGES += \
+    libsnapdragon_services_adk.qti \
+
 ifeq ($(TARGET_HAS_LOW_RAM),true)
     DELAUN := Launcher3Go
 else
