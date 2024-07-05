@@ -5,8 +5,8 @@ TARGET_BOARD_PLATFORM := qssi
 TARGET_BOARD_SUFFIX := _64
 TARGET_BOOTLOADER_BOARD_NAME := qssi_64
 
-#Align ELF segment of binaries to 64k
-PRODUCT_MAX_PAGE_SIZE_SUPPORTED := 65536
+#Align all 64-bit userspace ELF binaries to 16 KB
+PRODUCT_MAX_PAGE_SIZE_SUPPORTED := 16384
 
 #Enable AOSP to be page size agnostic
 PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO := true
@@ -304,6 +304,10 @@ ifeq (true,$(call math_gt_or_eq,$(SHIPPING_API_LEVEL),29))
   PRODUCT_ARTIFACT_PATH_REQUIREMENT_IGNORE_PATHS := /system/system_ext/
   PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := true
 endif
+
+# Enable allowlist for several aosp packages that should not be scanned in a "stopped" state
+# Some CTS test case failed after enabling feature config_stopSystemPackagesByDefault
+PRODUCT_PACKAGES += initial-package-stopped-states-aosp.xml
 
 # Enable support for APEX updates
 $(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
