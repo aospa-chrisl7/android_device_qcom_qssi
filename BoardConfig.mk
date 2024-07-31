@@ -73,6 +73,8 @@ TARGET_NO_RPC := true
 TARGET_PLATFORM_DEVICE_BASE := /devices/soc.0/
 TARGET_INIT_VENDOR_LIB := libinit_msm
 
+TARGET_DYNAMIC_64_32_MEDIASERVER := true
+
 #Disable appended dtb.
 TARGET_KERNEL_APPEND_DTB := false
 
