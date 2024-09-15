@@ -10,10 +10,6 @@ PRODUCT_MAX_PAGE_SIZE_SUPPORTED := 4096
 # Skip VINTF checks for kernel configs since we do not have kernel source
 PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS := false
 
-#Enable product partition Native I/F. It is automatically set to current if
-#the shipping API level for the target is greater than 29
-PRODUCT_PRODUCT_VNDK_VERSION := current
-
 RELAX_USES_LIBRARY_CHECK := true
 NEED_AIDL_NDK_PLATFORM_BACKEND := true
 
@@ -259,10 +255,6 @@ ifneq ($(strip $(TARGET_USES_RRO)),true)
 DEVICE_PACKAGE_OVERLAYS += device/qcom/qssi/overlay
 endif
 
-
-#Enable vndk-sp Libraries
-PRODUCT_PACKAGES += vndk_package
-
 PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE:=true
 
 
@@ -292,6 +284,10 @@ ifeq (true,$(call math_gt_or_eq,$(SHIPPING_API_LEVEL),29))
   PRODUCT_ARTIFACT_PATH_REQUIREMENT_IGNORE_PATHS := /system/system_ext/
   PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := true
 endif
+
+# Enable allowlist for several aosp packages that should not be scanned in a "stopped" state
+# Some CTS test case failed after enabling feature config_stopSystemPackagesByDefault
+PRODUCT_PACKAGES += initial-package-stopped-states-aosp.xml
 
 # Enable support for APEX updates
 $(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)

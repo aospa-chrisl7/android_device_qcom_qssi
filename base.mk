@@ -632,7 +632,6 @@ WPA += hs20-osu-client
 #ZLIB
 ZLIB := gzip
 ZLIB += libunz
-ZLIB_HOST := minigzip
 
 #Charger
 CHARGER := charger
@@ -669,6 +668,7 @@ FD_LEAK := libc_leak_detector
 
 PRODUCT_PACKAGES := \
     AccountAndSyncSettings \
+    Bluetooth \
     DeskClock \
     AlarmProvider \
     Calculator \
@@ -780,7 +780,6 @@ PRODUCT_PACKAGES += $(QRGND)
 PRODUCT_PACKAGES += $(UPDATER)
 PRODUCT_PACKAGES += $(WPA)
 PRODUCT_PACKAGES += $(ZLIB)
-PRODUCT_HOST_PACKAGES += $(ZLIB_HOST)
 PRODUCT_PACKAGES += $(VT_JNI)
 PRODUCT_PACKAGES += $(VT_QTI_PERMISSIONS)
 PRODUCT_PACKAGES += $(CRDA)
@@ -854,11 +853,6 @@ endif
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     ro.oem_unlock_supported=1
 
-
-# VNDK-SP:
-PRODUCT_PACKAGES += \
-    vndk-sp \
-
 TARGET_FS_CONFIG_GEN := device/qcom/qssi/config.fs
 
 ifeq ($(TARGET_HAS_LOW_RAM),true)
@@ -921,7 +915,7 @@ SOONG_CONFIG_bredr_vs_btadva += bredr_or_btadva
 
 ifneq "$(wildcard vendor/qcom/proprietary/commonsys/bt/bt_adv_audio)" ""
     $(warning bt_adv_audio dir is present)
-    SOONG_CONFIG_bredr_vs_btadva_bredr_or_btadva := btadva
+    SOONG_CONFIG_bredr_vs_btadva_bredr_or_btadva := bredr 
 else
     $(warning bt_adv_audio dir is not present)
     SOONG_CONFIG_bredr_vs_btadva_bredr_or_btadva := bredr
