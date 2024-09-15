@@ -35,6 +35,11 @@ It allows additional grants on top of privapp-permissions-platform.xml
         <permission name="android.permission.MANAGE_USERS"/>
     </privapp-permissions>
 
+    <privapp-permissions package="com.qualcomm.callservice">
+       <permission name="android.permission.CONTROL_INCALL_EXPERIENCE"/>
+       <permission name="android.permission.MODIFY_PHONE_STATE"/>
+    </privapp-permissions>
+
     <privapp-permissions package="com.skyhook.blp">
         <permission name="android.permission.INTERACT_ACROSS_USERS"/>
     </privapp-permissions>

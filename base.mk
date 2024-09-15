@@ -698,6 +698,9 @@ PRODUCT_PACKAGES := \
     QesdkSysService \
     libqesdk_ndk_platform.qti
 
+PRODUCT_PACKAGES += \
+    libsnapdragon_services_adk.qti \
+
 ifeq ($(TARGET_HAS_LOW_RAM),true)
     DELAUN := Launcher3Go
 else
@@ -804,6 +807,9 @@ PRODUCT_PACKAGES += vcard
 
 # tcmiface for tcm support
 PRODUCT_PACKAGES += tcmiface
+
+#usbudev service for usb ip assigment
+PRODUCT_PACKAGES += usbudev
 
 # healthd libaray expanded for mode charger
 PRODUCT_PACKAGES += libhealthd.msm

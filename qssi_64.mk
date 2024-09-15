@@ -1,8 +1,18 @@
-#For QSSI, we build only the system image. Here we explicitly set the images
+#For QSSI_64, we build only the system image. Here we explicitly set the images
 #we build so there is no confusion.
 
 TARGET_BOARD_PLATFORM := qssi
-TARGET_BOOTLOADER_BOARD_NAME := qssi
+TARGET_BOARD_SUFFIX := _64
+TARGET_BOOTLOADER_BOARD_NAME := qssi_64
+
+#Align all 64-bit userspace ELF binaries to 16 KB
+PRODUCT_MAX_PAGE_SIZE_SUPPORTED := 16384
+
+#Enable AOSP to be page size agnostic
+PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO := true
+
+#Flag to Enable 64 bit only configuration
+TARGET_SUPPORTS_64_BIT_ONLY := true
 
 # Opt out of 16K alignment changes
 PRODUCT_MAX_PAGE_SIZE_SUPPORTED := 4096
@@ -25,6 +35,9 @@ PRODUCT_BUILD_ODM_IMAGE := false
 PRODUCT_BUILD_CACHE_IMAGE := false
 PRODUCT_BUILD_USERDATA_IMAGE := false
 
+PRODUCT_BUILD_PVMFW_IMAGE := true
+BOARD_PVMFWIMAGE_PARTITION_SIZE := 0x100000
+
 # Enable debugfs restrictions
 PRODUCT_SET_DEBUGFS_RESTRICTIONS := true
 
@@ -41,7 +54,7 @@ BOARD_AVB_ENABLE := true
 
 # Retain the earlier default behavior i.e. ota config (dynamic partition was disabled if not set explicitly), so set
 # SHIPPING_API_LEVEL to 28 if it was not set earlier (this is generally set earlier via build.sh per-target)
-SHIPPING_API_LEVEL := 34
+SHIPPING_API_LEVEL := 35
 
 $(call inherit-product-if-exists, vendor/qcom/defs/product-defs/system/cne_url*.mk)
 
@@ -66,12 +79,12 @@ PRODUCT_BUILD_PRODUCT_IMAGE := false
 else
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 # Disable building the SUPER partition in this build. SUPER should be built
-# after QSSI has been merged with the SoC build.
+# after QSSI_64 has been merged with the SoC build.
 PRODUCT_BUILD_SYSTEM_EXT_IMAGE := true
 PRODUCT_BUILD_PRODUCT_IMAGE := true
 PRODUCT_BUILD_SUPER_PARTITION := false
 PRODUCT_BUILD_RAMDISK_IMAGE := true
-BOARD_AVB_VBMETA_SYSTEM := system system_ext product
+BOARD_AVB_VBMETA_SYSTEM := system system_ext product pvmfw
 BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
 BOARD_AVB_VBMETA_SYSTEM_ALGORITHM := SHA256_RSA2048
 BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
@@ -87,10 +100,10 @@ PRODUCT_SOONG_NAMESPACES += \
     hardware/google/av \
     hardware/google/interfaces
 
-VENDOR_QTI_PLATFORM := qssi
-VENDOR_QTI_DEVICE := qssi
+VENDOR_QTI_PLATFORM := qssi_64
+VENDOR_QTI_DEVICE := qssi_64
 
-#QSSI configuration
+#QSSI 64 bit configuration
 #Single system image project structure
 TARGET_USES_QSSI := true
 
@@ -99,8 +112,8 @@ TARGET_USES_NEW_ION := true
 ENABLE_AB ?= true
 
 TARGET_DEFINES_DALVIK_HEAP := true
-$(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
-$(call inherit-product, device/qcom/qssi/common64.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit_only.mk)
+$(call inherit-product, device/qcom/qssi_64/common64.mk)
 
 #Inherit all except heap growth limit from phone-xhdpi-2048-dalvik-heap.mk
 PRODUCT_PROPERTY_OVERRIDES  += \
@@ -116,7 +129,7 @@ PRODUCT_DEVICE := $(VENDOR_QTI_DEVICE)
 PRODUCT_BRAND := qti
 PRODUCT_MODEL := qssi system image for arm64
 
-PRODUCT_EXTRA_VNDK_VERSIONS := 30 31 32 33
+PRODUCT_EXTRA_VNDK_VERSIONS := 30 31 32 33 34
 
 #Initial bringup flags
 TARGET_USES_AOSP := false
@@ -133,6 +146,14 @@ TARGET_USES_NQ_NFC := true
 PRODUCT_CHARACTERISTICS := nosdcard
 BOARD_FRP_PARTITION_NAME := frp
 
+PRODUCT_PACKAGES += qspa_system.rc qspa_default.rc
+
+# TODO(b/330696629) remove this once device can drop HIDL.
+# This adds hwservicemanager and the allocator service to the device.
+PRODUCT_PACKAGES += \
+    hwservicemanager \
+    android.hidl.allocator@1.0-service
+
 #Android EGL implementation
 PRODUCT_PACKAGES += libGLES_android
 PRODUCT_PACKAGES += fsck.exfat
@@ -144,7 +165,7 @@ PRODUCT_PACKAGES += telephony-ext
 
 TARGET_ENABLE_QC_AV_ENHANCEMENTS := false
 
-TARGET_SYSTEM_PROP += device/qcom/qssi/system.prop
+TARGET_SYSTEM_PROP += device/qcom/qssi_64/system.prop
 
 TARGET_DISABLE_DASH := true
 TARGET_DISABLE_QTI_VPP := true
@@ -189,7 +210,7 @@ PRODUCT_PACKAGES += \
     android.hardware.health@1.0-service \
     libhealthd.msm
 
-DEVICE_FRAMEWORK_MANIFEST_FILE := device/qcom/qssi/framework_manifest.xml
+DEVICE_FRAMEWORK_MANIFEST_FILE := device/qcom/qssi_64/framework_manifest.xml
 DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := vendor/qcom/opensource/core-utils/vendor_framework_compatibility_matrix.xml
 
 #audio related module
@@ -236,15 +257,15 @@ KERNEL_MODULES_OUT := out/target/product/$(PRODUCT_NAME)/$(KERNEL_MODULES_INSTAL
 
 ifneq ($(strip $(TARGET_BUILD_VARIANT)),user)
 PRODUCT_COPY_FILES += \
-    device/qcom/qssi/init.qcom.testscripts.sh:$(TARGET_COPY_OUT_PRODUCT)/etc/init.qcom.testscripts.sh
+    device/qcom/qssi_64/init.qcom.testscripts.sh:$(TARGET_COPY_OUT_PRODUCT)/etc/init.qcom.testscripts.sh
 endif
 
 PRODUCT_COPY_FILES += \
-    device/qcom/qssi/public.libraries.product-qti.txt:$(TARGET_COPY_OUT_PRODUCT)/etc/public.libraries-qti.txt
+    device/qcom/qssi_64/public.libraries.product-qti.txt:$(TARGET_COPY_OUT_PRODUCT)/etc/public.libraries-qti.txt
 
 # copy system_ext specific whitelisted libraries to system_ext/etc
 PRODUCT_COPY_FILES += \
-    device/qcom/qssi/public.libraries.system_ext-qti.txt:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/public.libraries-qti.txt
+    device/qcom/qssi_64/public.libraries.system_ext-qti.txt:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/public.libraries-qti.txt
 
 #Enable full treble flag
 PRODUCT_FULL_TREBLE_OVERRIDE := true
@@ -252,7 +273,7 @@ PRODUCT_VENDOR_MOVE_ENABLED := true
 PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
 
 ifneq ($(strip $(TARGET_USES_RRO)),true)
-DEVICE_PACKAGE_OVERLAYS += device/qcom/qssi/overlay
+DEVICE_PACKAGE_OVERLAYS += device/qcom/qssi_64/overlay
 endif
 
 PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE:=true
@@ -275,12 +296,12 @@ AUDIO_FEATURE_ENABLED_DLKM := false
 endif
 
 # Enable virtual A/B compression
-$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota/android_t_baseline.mk)
-PRODUCT_VIRTUAL_AB_COMPRESSION_METHOD := gz
+$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota/vabc_features.mk)
+PRODUCT_VIRTUAL_AB_COMPRESSION_METHOD := lz4
 
-# Include mainline components and QSSI whitelist
+# Include mainline components and qssi_64 whitelist
 ifeq (true,$(call math_gt_or_eq,$(SHIPPING_API_LEVEL),29))
-  $(call inherit-product, device/qcom/qssi/qssi_whitelist.mk)
+  $(call inherit-product, device/qcom/qssi_64/qssi_64_whitelist.mk)
   PRODUCT_ARTIFACT_PATH_REQUIREMENT_IGNORE_PATHS := /system/system_ext/
   PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := true
 endif
@@ -292,9 +313,16 @@ PRODUCT_PACKAGES += initial-package-stopped-states-aosp.xml
 # Enable support for APEX updates
 $(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
 
-# Enable allowlist for some aosp packages that should not be scanned in a "stopped" state
-# Some CTS test case failed after enabling feature config_stopSystemPackagesByDefault
-PRODUCT_PACKAGES += initial-package-stopped-states-aosp.xml
-
 # QTI Components
 TARGET_COMMON_QTI_COMPONENTS := all
+
+#enable virtualization service, please verify if virtualization needs to be updated
+#for low ram targets
+$(call inherit-product, packages/modules/Virtualization/apex/product_packages.mk)
+
+###################################################################################
+# This is the End of target.mk file.
+# Now, Pickup other split product.mk files:
+###################################################################################
+$(call inherit-product-if-exists, vendor/qcom/defs/product-defs/system/*.mk)
+###################################################################################
